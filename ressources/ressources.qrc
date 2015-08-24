@@ -2,4 +2,7 @@
     <qresource prefix="/stylesheet">
         <file>dark_stylesheet.qss</file>
     </qresource>
+    <qresource prefix="/config">
+        <file>appsettings.ini</file>
+    </qresource>
 </RCC>

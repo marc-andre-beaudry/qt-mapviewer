@@ -36,7 +36,8 @@ SOURCES += \
     src/DownloadTileRequest.cpp
 
 OTHER_FILES += \
-    ressources/dark_stylesheet.qss
+    ressources/dark_stylesheet.qss \
+    ressources/appsettings.ini
 
 RESOURCES += \
     ressources/ressources.qrc

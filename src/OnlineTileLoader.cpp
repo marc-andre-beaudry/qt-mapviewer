@@ -4,10 +4,15 @@
 #include <QDebug>
 #include <QImageReader>
 #include <QNetworkReply>
+#include <QSettings>
 #include "DownloadTileRequest.h"
 
 OnlineTileLoader::OnlineTileLoader()
 {
+    QString key("NetworkRequest/");
+    QSettings* settings = new QSettings(":/config/appsettings.ini", QSettings::IniFormat);
+    this->requestUserAgent = settings->value( key + "user-agent", "r").toString();
+
 	// Create the network access manager used to fetch tiles from server
 	networkAccesManager = new QNetworkAccessManager(this);
 
@@ -34,16 +39,14 @@ void OnlineTileLoader::loadTile(TileInfo info)
 	// Create the request obj
     QNetworkRequest networkRequest(url);
 	networkRequest.setOriginatingObject(request);
-    networkRequest.setRawHeader("User-Agent", "Mozilla Firefox");
+    networkRequest.setRawHeader("User-Agent", this->requestUserAgent.toUtf8());
 		
 	// Send async request
-	QNetworkReply* reply = networkAccesManager->get(networkRequest);	
+    networkAccesManager->get(networkRequest);
 }
 
 void OnlineTileLoader::networkReplyReady(QNetworkReply* reply)
 {
-    qDebug() << reply->error() << " ";
-    qDebug() << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) << " ";
 	// Error check
 	if (reply->error() == QNetworkReply::NoError)
 	{

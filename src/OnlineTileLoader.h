@@ -20,6 +20,7 @@ class OnlineTileLoader : public QObject
 	private:
 		QNetworkAccessManager*	networkAccesManager;
 		TileRequestFactory		tileRequestFactory;
+        QString                 requestUserAgent;
 
 	private slots:
 		void networkReplyReady(QNetworkReply* reply);
