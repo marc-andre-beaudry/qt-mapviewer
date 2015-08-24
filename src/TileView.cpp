@@ -46,19 +46,10 @@ void TileView::addTile(QImage loadedImage, int x, int y, int imgSize)
 	displayedItem->setPos(x*imgSize,y*imgSize);
 	displayedItem->setZValue(TILE_Z_LAYER);
 
-	// Add debug text
-	QString str("%1_%2 (%3_%4)");
-	str = str.arg(x).arg(y).arg(x * imgSize).arg(y * imgSize);
-	QGraphicsTextItem* item = new QGraphicsTextItem(str, 0, scene);
-	item->setDefaultTextColor(QColor(255, 0, 0));
-	item->setPos(x * imgSize, y * imgSize);
-	item->setZValue(TILE_TEXT_Z_LAYER);
-
 	QRectF bound = scene->itemsBoundingRect();
 	QRectF enlargedBound = QRectF(bound.x() - 100, bound.y() - 100, bound.width() + 200, bound.height() + 200);
 
-	setSceneRect(enlargedBound);
-	//fitInView(bound ,Qt::KeepAspectRatio);
+    setSceneRect(enlargedBound);
 }
 
 void TileView::addMarker(int id, double x, double y, QImage image)
@@ -111,13 +102,6 @@ void TileView::clearAllMarker()
 
 void TileView::SetCenter(const QPointF& centerPoint)
 {
-    //Get the rectangle of the visible area in scene coords
-    QRectF visibleArea = mapToScene(rect()).boundingRect();
-
-    //Get the scene area
-    QRectF sceneBounds = sceneRect();
-
-	//Update the scrollbars
 	CurrentCenterPoint = centerPoint;
     centerOn(CurrentCenterPoint);
 
@@ -125,7 +109,6 @@ void TileView::SetCenter(const QPointF& centerPoint)
     QPointF bottomRight = mapToScene(this->width(), this->height());
 
     QRectF rectangle(topLeft, bottomRight);
-	//qDebug() << "Scene rectangle : " << rectangle;
 	emit visibleSceneChanged(rectangle);
 }
 
@@ -264,36 +247,28 @@ void TileView::clearScene()
 
 void TileView::centerScene(const QPointF& centerPoint)
 {
-	centerOn(centerPoint);
+    centerOn(centerPoint);
 
-	QGraphicsLineItem* item1 = new QGraphicsLineItem(0, centerPoint.y(), INT_MAX, centerPoint.y());
-	item1->setPen(QPen(QColor(255, 0, 0)));
-	item1->setZValue(10);
+    // Invisible crosshair... can be used for debug if we draw diff color
+    QGraphicsLineItem* item1 = new QGraphicsLineItem(0, centerPoint.y(), INT_MAX, centerPoint.y());
+    item1->setPen(QPen(QColor(0, 0, 0, 0)));
+    item1->setZValue(10);
 
-	QGraphicsLineItem* item2 = new QGraphicsLineItem(centerPoint.x(), 0, centerPoint.x(), INT_MAX);
-	item2->setPen(QPen(QColor(255, 0, 0)));
-	item2->setZValue(10);
+    QGraphicsLineItem* item2 = new QGraphicsLineItem(centerPoint.x(), 0, centerPoint.x(), INT_MAX);
+    item2->setPen(QPen(QColor(0, 0, 0, 0)));
+    item2->setZValue(10);
 
-	scene->addItem(item1);
-	scene->addItem(item2);
+    scene->addItem(item1);
+    scene->addItem(item2);
 
-	//CurrentCenterPoint = centerPoint;
+    CurrentCenterPoint = centerPoint;
 	SetCenter(centerPoint);
 }
 
 void TileView::paintEvent(QPaintEvent* event)
 {
-	// let base implementation draw child widgets
+    // let base implementation draw child widgets
     QGraphicsView::paintEvent(event);
-
-	QRect rect = this->rect();
-
-	QPainter painter(this->viewport());
-	QPen pen(Qt::blue, 1, Qt::SolidLine);
-
-	painter.setPen(pen);
-	painter.drawLine(0, rect.height() / 2, rect.width(), rect.height()/2);
-	painter.drawLine(rect.width()/ 2, 0, rect.width() / 2, rect.height());	
 }
 
 void TileView::isZoomEnable(bool)
